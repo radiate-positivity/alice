@@ -48,7 +48,7 @@ def handle_dialog(req, res):
         return
 
     response = requests.get('https://deckofcardsapi.com/api/deck/new/shuffle/').json()
-    res['response']['text'] = str(response)
+    res['response']['text'] = response['deck_id']
     return
 
 #     if req['request']['original_utterance'].lower() in [
