@@ -1,14 +1,16 @@
 from flask import Flask, request
 import logging
 import json
-from trans import *
+import os
+import requests
+from trans import start, take_card
 
 app = Flask(__name__)
 
 logging.basicConfig(level=logging.INFO, filename='app.log', format='%(asctime)s %(levelname)s %(name)s %(message)s')
 
 sessionStorage = {}
-V = {'0': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14}
+V = {'0': 10, 'J': 2, 'Q': 3, 'K': 4, 'A': 11}
 @app.route('/post', methods=['POST'])
 def main():
 
@@ -30,7 +32,6 @@ def main():
 
 
 def handle_dialog(res, req):
-
     user_id = req['session']['user_id']
     if req['session']['new']:
         res['response']['text'] = 'Привет! Назови своё имя!'
@@ -38,8 +39,7 @@ def handle_dialog(res, req):
             'first_name': None,
             'game_started': False ,
             'game_id': None,
-            'who_go': 0,
-            'best_card': choise(['H', 'C', 'D', 'S'])
+            'point': 0
             }
         return
 
@@ -49,7 +49,7 @@ def handle_dialog(res, req):
             res['response']['text'] = 'Не расслышала имя. Повтори, пожалуйста!'
         else:
             sessionStorage[user_id]['first_name'] = first_name
-            res['response']['text'] = f'Приятно познакомиться, {first_name.title()}. Я Алиса. Хочешь поиграть в карта?'
+            res['response']['text'] = f'Приятно познакомиться, {first_name.title()}. Я Алиса. Хочешь поиграть в карты?'
             res['response']['buttons'] = [
                 {
                     'title': 'Да',
@@ -58,53 +58,98 @@ def handle_dialog(res, req):
                 {
                     'title': 'Нет',
                     'hide': True
-                }
-            ]
-
-   if not sessionStorage[user_id]['game_started']:
-        if 'да' in req['request']['nlu']['tokens']:
-            game_id = start()
-            sessionStorage[user_id]['game_id'] = game_id
-            print(game_id)
-            sessionStorage[user_id]['game_started'] = True
-
-        elif 'нет' in req['request']['nlu']['tokens']:
-            res['response']['text'] = 'Ну и как так? Зачем вы тогда приходили?'
-            res['end_session'] = True
-        else:
-            res['response']['text'] = 'Так ты хочешь сыграть?'
-            res['response']['buttons'] = [
-                {
-                    'title': 'Да',
-                    'hide': True
                 },
                 {
-                    'title': 'Нет',
+                    'title': 'Правила',
                     'hide': True
                 }
             ]
+
     else:
-        if sessionStorage[user_id]['who_go'] % 2 == 0: # player
-            go_player()
+        if not sessionStorage[user_id]['game_started']:
+            if 'да' in req['request']['nlu']['tokens']:
+                game_id = start()
+                sessionStorage[user_id]['game_id'] = game_id
+                sessionStorage[user_id]['game_started'] = True
+                res['response']['text'] = game_id
+                p, p_o, card = take(sessionStorage[user_id]['game_id'], sessionStorage[user_id]['point'])
+                play_game(res, req)
+
+            elif 'нет' in req['request']['nlu']['tokens']:
+                res['response']['text'] = 'Хорошо, приходите ещё!'
+                res['end_session'] = True
+
+            elif 'правила' in req['request']['nlu']['tokens']:
+                res['response']['text'] = 'Вам произвольно выбирается карта из колоды. Количество очков равно номиналу карты. Туз, король, дама, валет оцениваются как 11, 4, 3, 2. Карты берутся, пока количество набранных очков не равно 21 и более. Если вы набрали раовно 21 очко - вы выиграли, меньше - проиграли.Будем играть?'
+
+            else:
+                res['response']['text'] = 'Так ты хочешь сыграть?'
+                res['response']['buttons'] = [
+                    {
+                        'title': 'Да',
+                        'hide': True
+                    },
+                    {
+                        'title': 'Нет',
+                        'hide': True
+                    },
+                    {
+                        'title': 'Правила',
+                        'hide': True
+                    }
+                ]
         else:
-            go_alice()
-        sessionStorage[user_id]['who_go'] += 1
+            if 'да' in req['request']['nlu']['tokens']:
+                play_game(res, req)
+
+            elif 'нет' in req['request']['nlu']['tokens']:
+                pass
+
+def play_game(res, req):
+    user_id = req['session']['user_id']
+    p, p_o, card = take(sessionStorage[user_id]['game_id'], sessionStorage[user_id]['point'], res)
+    if p == 21:
+        res['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас 21 очко! Вы выйграли! Хотите сыграть ещё?'.format(card, p_o)
+        sessionStorage[user_id]['game_started'] = False
+        sessionStorage[user_id]['game_id'] = None
+        sessionStorage[user_id]['point'] = 0
+    elif p > 21:
+        res ['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Вы проиграли:( Хотите сыграть ещё?'.format(card, p_o, p)
+        sessionStorage[user_id]['game_started'] = False
+        sessionStorage[user_id]['game_id'] = None
+        sessionStorage[user_id]['point'] = 0
+    else:
+        res['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Берём ещё карту?'.format(card, p_o, p)
+        res['response']['buttons'] = [
+            {
+                'title': 'Да',
+                'hide': True
+            },
+            {
+                'title': 'Нет',
+                'hide': True
+            },
+            {
+                'title': 'Правила',
+                'hide': True
+            }
+        ]
+    return
 
 
-def go_player(req):
-    pass
-
-def go_alice(req):
-    game_id = sessionStorage[user_id]['game_id']
-    best =  sessionStorage[user_id]['best_card']
-    table = get_cards(game_id, 'table')
-    last = table[0][-1]['code']
-    alice_card = [x['code'] for x in get_cards(game_id, 'alice')[0]]
-
-    if table[1] % 2 == 1:
-        for x in alice_card:
-            if x[-1] == last[-1] and last[-1] != best:
-                if x[0]
+def take(game_id, point, res):
+    p_o = None
+    card = None
+    cards = take_card(game_id)
+    card = cards[-1]['code']
+    res['response']['text'] = '{}'.format(card)
+    if card[0].isdigit() and card[0] == '0':
+        p_o = int(card[0])
+        point += int(card[0])
+    else:
+        p_o = V[card[0]]
+        point += V[card[0]]
+    return point, p_o, card
 
 
 def get_first_name(req):
