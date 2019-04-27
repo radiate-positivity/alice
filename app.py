@@ -99,11 +99,7 @@ def handle_dialog(res, req):
                     }
                 ]
         else:
-            if 'да' in req['request']['nlu']['tokens']:
-                play_game(res, req)
-
-            elif 'нет' in req['request']['nlu']['tokens']:
-                pass
+            play_game(res, req)
 
 def play_game(res, req):
     user_id = req['session']['user_id']
