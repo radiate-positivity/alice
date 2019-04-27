@@ -3,7 +3,7 @@ import logging
 import json
 import os
 import requests
-from trans import start, take_card
+from api import start, take_card
 
 app = Flask(__name__)
 
