@@ -139,7 +139,7 @@ def take(game_id, point, res):
     cards = take_card(game_id)
     card = cards[-1]['code']
     res['response']['text'] = '{}'.format(card)
-    if card[0].isdigit() and card[0] == '0':
+    if card[0].isdigit() and card[0] != '0':
         p_o = int(card[0])
         point += int(card[0])
     else:
