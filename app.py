@@ -13,6 +13,8 @@ sessionStorage = {}
 P = {'0': 10, 'J': 2, 'Q': 3, 'K': 4, 'A': 11}
 K = {'H': 'Ч', 'S': 'П', 'C': 'Т', 'D': 'Б'}
 V = {'0': '10', 'J': 'В', 'Q': 'Д', 'K': 'K', 'A': 'Т'}
+TOKEN = 'AQAAAAAgybA_AAT7o5bkMo-x70LHvAzRp8P6GCM'
+ID = 'a60fd6db-e817-4bad-8399-12b6a5f70b22'
 @app.route('/post', methods=['POST'])
 def main():
 
@@ -81,7 +83,7 @@ def handle_dialog(res, req):
                 sessionStorage[user_id]['game_started'] = False
                 sessionStorage[user_id]['game_id'] = None
                 sessionStorage[user_id]['point'] = 0
-                res['response']['end_session'] = True
+                res['end_session'] = True
 
             elif 'правила' in req['request']['nlu']['tokens']:
                 res['response']['text'] = 'Вам произвольно выбирается карта из колоды. Количество очков равно номиналу карты. Туз, король, дама, валет оцениваются как 11, 4, 3, 2. Карты берутся, пока количество набранных очков не равно 21 и более. Если вы набрали раовно 21 очко - вы выиграли, меньше - проиграли.Будем играть?'
@@ -110,7 +112,7 @@ def handle_dialog(res, req):
                 sessionStorage[user_id]['game_started'] = False
                 sessionStorage[user_id]['game_id'] = None
                 sessionStorage[user_id]['point'] = 0
-                res['response']['end_session'] = True
+                res['end_session'] = True
 
             elif 'правила' in req['request']['nlu']['tokens']:
                 res['response']['text'] = 'Вам произвольно выбирается карта из колоды. Количество очков равно номиналу карты. Туз, король, дама, валет оцениваются как 11, 4, 3, 2. Карты берутся, пока количество набранных очков не равно 21 и более. Если вы набрали раовно 21 очко - вы выиграли, больше - проиграли. Продолжим?'
@@ -142,6 +144,13 @@ def play_game(res, req):
         res ['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Вы проиграли:( Хотите сыграть ещё?'.format(card, p_o, p)
     else:
         res['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Берём ещё карту?'.format(card, p_o, p)
+        #########
+        pic_id = pic()
+        res['response']['card'] = {}
+        res['response']['card']['type'] = 'BigImage'
+        res['response']['card']['title'] = 'Карта'
+        res['response']['card']['image_id'] = pic_id
+        
     res['response']['buttons'] = [        
         {
             'title': 'Да',
@@ -196,6 +205,15 @@ def take_card(deck_id):
     json = response.json()
 
     return json['cards']
+
+def pic(): # adr):
+    adr = 'https://deckofcardsapi.com/static/img/AS.png'
+    url = 'https://dialogs.yandex.net/api/v1/skills/{}/images'.format(ID)
+    headers = {'authorization': 'OAuth {}'.format(TOKEN)}
+    params = {"url": adr}
+    r = requests.post(url, params, headers=headers)
+    return r['image']['id']
+
 
 #if __name__ == '__main__':
 #    app.run()
