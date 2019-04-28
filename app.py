@@ -13,8 +13,9 @@ sessionStorage = {}
 P = {'0': 10, 'J': 2, 'Q': 3, 'K': 4, 'A': 11}
 K = {'H': 'Ч', 'S': 'П', 'C': 'Т', 'D': 'Б'}
 V = {'0': '10', 'J': 'В', 'Q': 'Д', 'K': 'K', 'A': 'Т'}
-TOKEN = 'AQAAAAAgybA_AAT7o5bkMo-x70LHvAzRp8P6GCM'
-ID = 'a60fd6db-e817-4bad-8399-12b6a5f70b22'
+
+LOSE = '1030494/49669d94682dd7fdced2'
+WIN = '1533899/ddeb8459de13000602f7'
 @app.route('/post', methods=['POST'])
 def main():
 
@@ -37,15 +38,6 @@ def main():
 
 def handle_dialog(res, req):
     user_id = req['session']['user_id']
-    
-    
-    pic_id = pic()
-    res['response']['card'] = {}
-    res['response']['card']['type'] = 'BigImage'
-    res['response']['card']['title'] = 'Карта'
-    res['response']['card']['image_id'] = pic_id
-    
-    
     if req['session']['new']:
         res['response']['text'] = 'Привет! Назови своё имя!'
         sessionStorage[user_id] = {
@@ -149,16 +141,19 @@ def play_game(res, req):
     sessionStorage[user_id]['point'] = p
     if p == 21:
         res['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас 21 очко! Вы выйграли! Хотите сыграть ещё?'.format(card, p_o)
+        res['response']['card'] = {}
+        res['response']['card']['type'] = 'BigImage'
+        res['response']['card']['title'] = 'Карта'
+        res['response']['card']['image_id'] = WIN
     elif p > 21:
         res ['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Вы проиграли:( Хотите сыграть ещё?'.format(card, p_o, p)
+        
+        res['response']['card'] = {}
+        res['response']['card']['type'] = 'BigImage'
+        res['response']['card']['title'] = 'Карта'
+        res['response']['card']['image_id'] = LOSE
     else:
         res['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Берём ещё карту?'.format(card, p_o, p)
-        #########
-        #pic_id = pic()
-        #res['response']['card'] = {}
-        #res['response']['card']['type'] = 'BigImage'
-        #res['response']['card']['title'] = 'Карта'
-        #res['response']['card']['image_id'] = pic_id
         
     res['response']['buttons'] = [        
         {
@@ -214,15 +209,6 @@ def take_card(deck_id):
     json = response.json()
 
     return json['cards']
-
-def pic(): # adr):
-    adr = 'https://deckofcardsapi.com/static/img/AS.png'
-    url = 'https://dialogs.yandex.net/api/v1/skills/{}/images'.format(ID)
-    headers = {'authorization': 'OAuth {}'.format(TOKEN), 'Content-Type': 'multipart/form-data'}
-    files = {'url': adr}
-    r = requests.post(url, headers=headers)
-    print(str(r))
-    return r['image']['id']
 
 
 #if __name__ == '__main__':
