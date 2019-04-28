@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s %
 sessionStorage = {}
 P = {'0': 10, 'J': 2, 'Q': 3, 'K': 4, 'A': 11}
 K = {'H': 'Ч', 'S': 'П', 'C': 'Т', 'D': 'Б'}
-V = {'0': '10', 'J': 'В', 'Q': 'Д', 'A': 'Туз'}
+V = {'0': '10', 'J': 'В', 'Q': 'Д', 'A': 'Т'}
 @app.route('/post', methods=['POST'])
 def main():
 
@@ -148,7 +148,7 @@ def take(game_id, point, res):
     else:
         p_o = P[card[0]]
         point += P[card[0]]
-        ru_crd[0] = P[card[0]]
+        ru_crd[0] = V[card[0]]
     ru_crd[1] = K[card[1]]
     return point, p_o, ''.join(ru_crd)
 
