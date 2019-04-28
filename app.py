@@ -73,6 +73,7 @@ def handle_dialog(res, req):
                 sessionStorage[user_id]['game_started'] = True
                 #res['response']['text'] = game_id
                 p, p_o, card = take(sessionStorage[user_id]['game_id'], sessionStorage[user_id]['point'], res)
+                sessionStorage[user_id]['point'] = p
                 play_game(res, req)
 
             elif 'нет' in req['request']['nlu']['tokens']:
@@ -104,6 +105,7 @@ def handle_dialog(res, req):
 def play_game(res, req):
     user_id = req['session']['user_id']
     p, p_o, card = take(sessionStorage[user_id]['game_id'], sessionStorage[user_id]['point'], res)
+    sessionStorage[user_id]['point'] = p
     if p == 21:
         res['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас 21 очко! Вы выйграли! Хотите сыграть ещё?'.format(card, p_o)
         sessionStorage[user_id]['game_started'] = False
