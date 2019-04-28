@@ -10,9 +10,9 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s %(levelname)s %(name)s %(message)s')
 
 sessionStorage = {}
-V = {'0': 10, 'J': 2, 'Q': 3, 'K': 4, 'A': 11}
+P = {'0': 10, 'J': 2, 'Q': 3, 'K': 4, 'A': 11}
 K = {'H': 'Ч', 'S': 'П', 'C': 'Т', 'D': 'Б'}
-K = {'0': '10', 'J': 'В', 'Q': 'Д', 'A': 'Туз'}
+V = {'0': '10', 'J': 'В', 'Q': 'Д', 'A': 'Туз'}
 @app.route('/post', methods=['POST'])
 def main():
 
@@ -140,14 +140,17 @@ def take(game_id, point, res):
     card = None
     cards = take_card(game_id)
     card = cards[-1]['code']
+    ru_crd = card
     res['response']['text'] = '{}'.format(card)
     if card[0].isdigit() and card[0] != '0':
         p_o = int(card[0])
         point += int(card[0])
     else:
-        p_o = V[card[0]]
-        point += V[card[0]]
-    return point, p_o, card
+        p_o = P[card[0]]
+        point += P[card[0]]
+        ru_crd[0] = P[card[0]]
+    ru_crd[1] = K[card[1]]
+    return point, p_o, ru_crd
 
 
 def get_first_name(req):
