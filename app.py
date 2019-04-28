@@ -140,17 +140,14 @@ def play_game(res, req):
     p, p_o, card = take(sessionStorage[user_id]['game_id'], sessionStorage[user_id]['point'], res)
     sessionStorage[user_id]['point'] = p
     if p == 21:
-        res['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас 21 очко! Вы выйграли! Хотите сыграть ещё?'.format(card, p_o)
         res['response']['card'] = {}
         res['response']['card']['type'] = 'BigImage'
-        res['response']['card']['title'] = 'Карта'
+        res['response']['card']['title'] = 'Вы вытащили {}, это {} очков. Всего у вас 21 очко! Вы выйграли! Хотите сыграть ещё?'.format(card, p_o)
         res['response']['card']['image_id'] = WIN
     elif p > 21:
-        res ['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Вы проиграли:( Хотите сыграть ещё?'.format(card, p_o, p)
-        
         res['response']['card'] = {}
         res['response']['card']['type'] = 'BigImage'
-        res['response']['card']['title'] = 'Карта'
+        res['response']['card']['title'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Вы проиграли:( Хотите сыграть ещё?'.format(card, p_o, p)
         res['response']['card']['image_id'] = LOSE
     else:
         res['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Берём ещё карту?'.format(card, p_o, p)
