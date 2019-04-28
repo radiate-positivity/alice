@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s %
 sessionStorage = {}
 P = {'0': 10, 'J': 2, 'Q': 3, 'K': 4, 'A': 11}
 K = {'H': 'Ч', 'S': 'П', 'C': 'Т', 'D': 'Б'}
-V = {'0': '10', 'J': 'В', 'Q': 'Д', 'A': 'Т'}
+V = {'0': '10', 'J': 'В', 'Q': 'Д', 'K': 'K', 'A': 'Т'}
 @app.route('/post', methods=['POST'])
 def main():
 
@@ -75,14 +75,13 @@ def handle_dialog(res, req):
                 sessionStorage[user_id]['game_started'] = True
                 #res['response']['text'] = game_id
                 play_game(res, req)
-
+                
             elif 'нет' in req['request']['nlu']['tokens']:
                 res['response']['text'] = 'Хорошо, приходите ещё!'
                 res['end_session'] = True
 
             elif 'правила' in req['request']['nlu']['tokens']:
                 res['response']['text'] = 'Вам произвольно выбирается карта из колоды. Количество очков равно номиналу карты. Туз, король, дама, валет оцениваются как 11, 4, 3, 2. Карты берутся, пока количество набранных очков не равно 21 и более. Если вы набрали раовно 21 очко - вы выиграли, меньше - проиграли.Будем играть?'
-
             else:
                 res['response']['text'] = 'Так ты хочешь сыграть?'
                 res['response']['buttons'] = [
@@ -100,7 +99,16 @@ def handle_dialog(res, req):
                     }
                 ]
         else:
-            play_game(res, req)
+            if 'да' in req['request']['nlu']['tokens']:
+                play_game(res, req)
+            
+            elif 'нет' in req['request']['nlu']['tokens']:
+                res['response']['text'] = 'Хорошо, приходите ещё!'
+                res['end_session'] = True
+
+            elif 'правила' in req['request']['nlu']['tokens']:
+                res['response']['text'] = 'Вам произвольно выбирается карта из колоды. Количество очков равно номиналу карты. Туз, король, дама, валет оцениваются как 11, 4, 3, 2. Карты берутся, пока количество набранных очков не равно 21 и более. Если вы набрали раовно 21 очко - вы выиграли, больше - проиграли.Будем играть?'
+            
 
 def play_game(res, req):
     user_id = req['session']['user_id']
