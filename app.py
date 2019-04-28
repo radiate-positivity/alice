@@ -108,7 +108,23 @@ def handle_dialog(res, req):
 
             elif 'правила' in req['request']['nlu']['tokens']:
                 res['response']['text'] = 'Вам произвольно выбирается карта из колоды. Количество очков равно номиналу карты. Туз, король, дама, валет оцениваются как 11, 4, 3, 2. Карты берутся, пока количество набранных очков не равно 21 и более. Если вы набрали раовно 21 очко - вы выиграли, больше - проиграли.Будем играть?'
-            
+            else:
+                res['response']['text'] = 'Кажется, я не поняла, что вы хотели сказать. Повторите, пожалуйста.'
+                res['response']['buttons'] = [
+                    {
+                        'title': 'Да',
+                        'hide': True
+                    },
+                    {
+                        'title': 'Нет',
+                        'hide': True
+                    },
+                    {
+                        'title': 'Правила',
+                        'hide': True
+                    }
+                ]
+                
 
 def play_game(res, req):
     user_id = req['session']['user_id']
@@ -126,20 +142,20 @@ def play_game(res, req):
         sessionStorage[user_id]['point'] = 0
     else:
         res['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Берём ещё карту?'.format(card, p_o, p)
-        res['response']['buttons'] = [
-            {
-                'title': 'Да',
-                'hide': True
-            },
-            {
-                'title': 'Нет',
-                'hide': True
-            },
-            {
-                'title': 'Правила',
-                'hide': True
-            }
-        ]
+    res['response']['buttons'] = [        
+        {
+            'title': 'Да',
+            'hide': True
+        },
+        {
+            'title': 'Нет',
+            'hide': True
+        },
+        {
+            'title': 'Правила',
+            'hide': True
+        }
+    ]
     return
 
 
