@@ -37,6 +37,15 @@ def main():
 
 def handle_dialog(res, req):
     user_id = req['session']['user_id']
+    
+    
+    pic_id = pic()
+    res['response']['card'] = {}
+    res['response']['card']['type'] = 'BigImage'
+    res['response']['card']['title'] = 'Карта'
+    res['response']['card']['image_id'] = pic_id
+    
+    
     if req['session']['new']:
         res['response']['text'] = 'Привет! Назови своё имя!'
         sessionStorage[user_id] = {
@@ -145,11 +154,11 @@ def play_game(res, req):
     else:
         res['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Берём ещё карту?'.format(card, p_o, p)
         #########
-        pic_id = pic()
-        res['response']['card'] = {}
-        res['response']['card']['type'] = 'BigImage'
-        res['response']['card']['title'] = 'Карта'
-        res['response']['card']['image_id'] = pic_id
+        #pic_id = pic()
+        #res['response']['card'] = {}
+        #res['response']['card']['type'] = 'BigImage'
+        #res['response']['card']['title'] = 'Карта'
+        #res['response']['card']['image_id'] = pic_id
         
     res['response']['buttons'] = [        
         {
@@ -209,8 +218,8 @@ def take_card(deck_id):
 def pic(): # adr):
     adr = 'https://deckofcardsapi.com/static/img/AS.png'
     url = 'https://dialogs.yandex.net/api/v1/skills/{}/images'.format(ID)
-    headers = {'authorization': 'OAuth {}'.format(TOKEN)}
-    params = {"url": adr}
+    headers = {'authorization': 'OAuth {}'.format(TOKEN), 'Content-Type': 'multipart/form-data'}
+    files = {'url': adr}
     r = requests.post(url, params, headers=headers)
     print(str(r))
     return r['image']['id']
