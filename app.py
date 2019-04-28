@@ -3,11 +3,11 @@ import logging
 import json
 import os
 import requests
-#from api import start, take_card
+import sys
 
 app = Flask(__name__)
 
-logging.basicConfig(level=logging.INFO, filename='app.log', format='%(asctime)s %(levelname)s %(name)s %(message)s')
+logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s %(levelname)s %(name)s %(message)s')
 
 sessionStorage = {}
 V = {'0': 10, 'J': 2, 'Q': 3, 'K': 4, 'A': 11}
