@@ -212,6 +212,7 @@ def pic(): # adr):
     headers = {'authorization': 'OAuth {}'.format(TOKEN)}
     params = {"url": adr}
     r = requests.post(url, params, headers=headers)
+    print(str(r))
     return r['image']['id']
 
 
