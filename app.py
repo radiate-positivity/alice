@@ -78,6 +78,9 @@ def handle_dialog(res, req):
                 
             elif 'нет' in req['request']['nlu']['tokens']:
                 res['response']['text'] = 'Хорошо, приходите ещё!'
+                sessionStorage[user_id]['game_started'] = False
+                sessionStorage[user_id]['game_id'] = None
+                sessionStorage[user_id]['point'] = 0
                 res['end_session'] = True
 
             elif 'правила' in req['request']['nlu']['tokens']:
@@ -104,10 +107,13 @@ def handle_dialog(res, req):
             
             elif 'нет' in req['request']['nlu']['tokens']:
                 res['response']['text'] = 'Хорошо, приходите ещё!'
+                sessionStorage[user_id]['game_started'] = False
+                sessionStorage[user_id]['game_id'] = None
+                sessionStorage[user_id]['point'] = 0
                 res['end_session'] = True
 
             elif 'правила' in req['request']['nlu']['tokens']:
-                res['response']['text'] = 'Вам произвольно выбирается карта из колоды. Количество очков равно номиналу карты. Туз, король, дама, валет оцениваются как 11, 4, 3, 2. Карты берутся, пока количество набранных очков не равно 21 и более. Если вы набрали раовно 21 очко - вы выиграли, больше - проиграли.Будем играть?'
+                res['response']['text'] = 'Вам произвольно выбирается карта из колоды. Количество очков равно номиналу карты. Туз, король, дама, валет оцениваются как 11, 4, 3, 2. Карты берутся, пока количество набранных очков не равно 21 и более. Если вы набрали раовно 21 очко - вы выиграли, больше - проиграли. Продолжим?'
             else:
                 res['response']['text'] = 'Кажется, я не поняла, что вы хотели сказать. Повторите, пожалуйста.'
                 res['response']['buttons'] = [
@@ -132,14 +138,8 @@ def play_game(res, req):
     sessionStorage[user_id]['point'] = p
     if p == 21:
         res['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас 21 очко! Вы выйграли! Хотите сыграть ещё?'.format(card, p_o)
-        sessionStorage[user_id]['game_started'] = False
-        sessionStorage[user_id]['game_id'] = None
-        sessionStorage[user_id]['point'] = 0
     elif p > 21:
         res ['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Вы проиграли:( Хотите сыграть ещё?'.format(card, p_o, p)
-        sessionStorage[user_id]['game_started'] = False
-        sessionStorage[user_id]['game_id'] = None
-        sessionStorage[user_id]['point'] = 0
     else:
         res['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Берём ещё карту?'.format(card, p_o, p)
     res['response']['buttons'] = [        
