@@ -11,6 +11,8 @@ logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s %
 
 sessionStorage = {}
 V = {'0': 10, 'J': 2, 'Q': 3, 'K': 4, 'A': 11}
+K = {'H': 'Ч', 'S': 'П', 'C': 'Т', 'D': 'Б'}
+K = {'0': '10', 'J': 'В', 'Q': 'Д', 'A': 'Туз'}
 @app.route('/post', methods=['POST'])
 def main():
 
