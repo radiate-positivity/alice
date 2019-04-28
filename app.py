@@ -140,7 +140,7 @@ def take(game_id, point, res):
     card = None
     cards = take_card(game_id)
     card = cards[-1]['code']
-    ru_crd = card.list()
+    ru_crd = list(card)
     res['response']['text'] = '{}'.format(card)
     if card[0].isdigit() and card[0] != '0':
         p_o = int(card[0])
@@ -150,7 +150,7 @@ def take(game_id, point, res):
         point += P[card[0]]
         ru_crd[0] = P[card[0]]
     ru_crd[1] = K[card[1]]
-    return point, p_o, ru_crd
+    return point, p_o, ''.join(ru_crd)
 
 
 def get_first_name(req):
