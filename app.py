@@ -88,6 +88,20 @@ def handle_dialog(res, req):
 
             elif 'правила' in req['request']['nlu']['tokens']:
                 res['response']['text'] = 'Вам произвольно выбирается карта из колоды. Количество очков равно номиналу карты. Туз, король, дама, валет оцениваются как 11, 4, 3, 2. Карты берутся, пока количество набранных очков не равно 21 и более. Если вы набрали раовно 21 очко - вы выиграли, меньше - проиграли.Будем играть?'
+                res['response']['buttons'] = [
+                    {
+                        'title': 'Да',
+                        'hide': True
+                    },
+                    {
+                        'title': 'Нет',
+                        'hide': True
+                    },
+                    {
+                        'title': 'Правила',
+                        'hide': True
+                    }
+                ]
             else:
                 res['response']['text'] = 'Так ты хочешь сыграть?'
                 res['response']['buttons'] = [
@@ -117,6 +131,20 @@ def handle_dialog(res, req):
 
             elif 'правила' in req['request']['nlu']['tokens']:
                 res['response']['text'] = 'Вам произвольно выбирается карта из колоды. Количество очков равно номиналу карты. Туз, король, дама, валет оцениваются как 11, 4, 3, 2. Карты берутся, пока количество набранных очков не равно 21 и более. Если вы набрали раовно 21 очко - вы выиграли, больше - проиграли. Продолжим?'
+                res['response']['buttons'] = [
+                    {
+                        'title': 'Да',
+                        'hide': True
+                    },
+                    {
+                        'title': 'Нет',
+                        'hide': True
+                    },
+                    {
+                        'title': 'Правила',
+                        'hide': True
+                    }
+                ]
             else:
                 res['response']['text'] = 'Кажется, я не поняла, что вы хотели сказать. Повторите, пожалуйста.'
                 res['response']['buttons'] = [
@@ -144,11 +172,21 @@ def play_game(res, req):
         res['response']['card']['type'] = 'BigImage'
         res['response']['card']['title'] = 'Вы вытащили {}, это {} очков. Всего у вас 21 очко! Вы выйграли! Хотите сыграть ещё?'.format(card, p_o)
         res['response']['card']['image_id'] = WIN
+        
+        sessionStorage[user_id]['game_started'] = False
+        sessionStorage[user_id]['game_id'] = None
+        sessionStorage[user_id]['point'] = 0
+        
     elif p > 21:
         res['response']['card'] = {}
         res['response']['card']['type'] = 'BigImage'
         res['response']['card']['title'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Вы проиграли:( Хотите сыграть ещё?'.format(card, p_o, p)
         res['response']['card']['image_id'] = LOSE
+        
+        sessionStorage[user_id]['game_started'] = False
+        sessionStorage[user_id]['game_id'] = None
+        sessionStorage[user_id]['point'] = 0
+        
     else:
         res['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Берём ещё карту?'.format(card, p_o, p)
         
