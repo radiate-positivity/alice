@@ -220,7 +220,7 @@ def pic(): # adr):
     url = 'https://dialogs.yandex.net/api/v1/skills/{}/images'.format(ID)
     headers = {'authorization': 'OAuth {}'.format(TOKEN), 'Content-Type': 'multipart/form-data'}
     files = {'url': adr}
-    r = requests.post(url, params, headers=headers)
+    r = requests.post(url, headers=headers)
     print(str(r))
     return r['image']['id']
 
