@@ -54,7 +54,7 @@ def handle_dialog(res, req):
             res['response']['text'] = 'Не расслышала имя. Повтори, пожалуйста!'
         else:
             sessionStorage[user_id]['first_name'] = first_name
-            res['response']['text'] = f'Приятно познакомиться, {first_name.title()}. Я Алиса. Хочешь поиграть в карты?'
+            res['response']['text'] = f'Приятно познакомиться, {first_name.title()}. Хочешь поиграть в карты?'
             res['response']['buttons'] = [
                 {
                     'title': 'Да',
