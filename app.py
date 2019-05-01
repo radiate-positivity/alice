@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s %
 
 sessionStorage = {}
 P = {'0': 10, 'J': 10, 'Q': 10, 'K': 10, 'A': 11}
-K = {'H': 'Ч', 'S': 'П', 'C': 'Т', 'D': 'Б'}
+K = {'H': '♥', 'S': '♠', 'C': '♣', 'D': '♦'}
 V = {'0': '10', 'J': 'В', 'Q': 'Д', 'K': 'K', 'A': 'Т'}
 
 LOSE = '1030494/49669d94682dd7fdced2'
