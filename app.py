@@ -180,7 +180,7 @@ def play_game(res, req):
     elif p > 21:
         res['response']['card'] = {}
         res['response']['card']['type'] = 'BigImage'
-        res['response']['card']['title'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Вы проиграли:( Хотите сыграть ещё?'.format(card, p_o, p)
+        res['response']['card']['title'] = 'Вы вытащили {}, это {}. Всего очков: {}. Вы проиграли :( Хотите сыграть ещё?'.format(card, p_o, p)
         res['response']['card']['image_id'] = LOSE
         
         sessionStorage[user_id]['game_started'] = False
@@ -188,7 +188,7 @@ def play_game(res, req):
         sessionStorage[user_id]['point'] = 0
         
     else:
-        res['response']['text'] = 'Вы вытащили {}, это {} очков. Всего у вас {}. Берём ещё карту?'.format(card, p_o, p)
+        res['response']['text'] = 'Вы вытащили {}, это {}. Всего очков: {}. Берём ещё карту?'.format(card, p_o, p)
         
     res['response']['buttons'] = [        
         {
