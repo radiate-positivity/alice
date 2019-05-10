@@ -4,6 +4,7 @@ import json
 import os
 import requests
 import sys
+from api import start, take_card
 
 app = Flask(__name__)
 
@@ -237,21 +238,6 @@ def get_first_name(req):
     for entity in req['request']['nlu']['entities']:
         if entity['type'] == 'YANDEX.FIO':
             return entity['value'].get('first_name', None)
-
-def start():
-    url = 'https://deckofcardsapi.com/api/deck/new/shuffle/'
-    response = requests.get(url)
-    json = response.json()
-
-    return json['deck_id']
-
-def take_card(deck_id):
-    url = 'https://deckofcardsapi.com/api/deck/{}/draw/?count=1'.format(deck_id)
-
-    response = requests.get(url)
-    json = response.json()
-
-    return json['cards']
 
 
 #if __name__ == '__main__':
