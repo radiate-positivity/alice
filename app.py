@@ -39,7 +39,7 @@ def main():
 def handle_dialog(res, req):
     user_id = req['session']['user_id']
     if req['session']['new']:
-        res['response']['text'] = 'Привет! Назови своё имя!'
+        res['response']['text'] = 'Привет! Это игра 21 очко. В любой момент игры ты можешь узнать или напомнить себе как играть с помощью команды "Правила". А теперь представься и мы сможем сыграть!'
         sessionStorage[user_id] = {
             'first_name': None,
             'game_started': False ,
@@ -54,7 +54,7 @@ def handle_dialog(res, req):
             res['response']['text'] = 'Не расслышала имя. Повтори, пожалуйста!'
         else:
             sessionStorage[user_id]['first_name'] = first_name
-            res['response']['text'] = f'Приятно познакомиться, {first_name.title()}. Хочешь поиграть в карты?'
+            res['response']['text'] = f'Приятно познакомиться, {first_name.title()}. Начнём?'
             res['response']['buttons'] = [
                 {
                     'title': 'Да',
@@ -86,7 +86,7 @@ def handle_dialog(res, req):
                 sessionStorage[user_id]['point'] = 0
                 res['end_session'] = True
 
-            elif req['request']['nlu']['tokens'] in ['правила', 'помощь']:
+            elif req['request']['nlu']['tokens'] in [['правила'], ['помощь'], ['что', 'ты', 'умеешь']]:
                 res['response']['text'] = 'Вам произвольно выбирается карта из колоды. Количество очков равно номиналу карты. Король, дама, валет оцениваются как 10 очков, а туз как 11. Карты берутся, пока количество набранных очков не равно 21 или более. Если вы набрали ровно 21 очко - вы выиграли, больше - проиграли. Будем играть?'
                 res['response']['buttons'] = [
                     {
@@ -129,7 +129,7 @@ def handle_dialog(res, req):
                 sessionStorage[user_id]['point'] = 0
                 res['end_session'] = True
 
-            elif req['request']['nlu']['tokens'] in ['правила', 'помощь']:
+            elif req['request']['nlu']['tokens'] in [['правила'], ['помощь'], ['что', 'ты', 'умеешь']]:
                 res['response']['text'] = 'Вам произвольно выбирается карта из колоды. Количество очков равно номиналу карты. Король, дама, валет оцениваются как 10 очков, а туз - 11. Карты берутся, пока количество набранных очков не равно 21 или более. Если вы набрали ровно 21 очко - вы выиграли, больше - проиграли. Продолжим?'
                 res['response']['buttons'] = [
                     {
